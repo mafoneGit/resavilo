@@ -10,6 +10,9 @@ const inter = Inter({
   weight: ["400", "600", "700"],
 })
 
+// CSP uses a fresh nonce for each document response.
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: "Sign in - resavilo.",
   description: "Sign in to your resavilo. account",

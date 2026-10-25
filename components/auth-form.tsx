@@ -1,0 +1,236 @@
+"use client"
+
+import { useState, type FormEvent } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+
+export function AuthForm({ mode }: { mode: "login" | "register" }) {
+  const registering = mode === "register"
+  const [error, setError] = useState("")
+  const [notice, setNotice] = useState("")
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const form = event.currentTarget
+    const values = new FormData(form)
+    setError("")
+    setNotice("")
+    if (registering && values.get("password") !== values.get("confirmPassword")) {
+      setError("Passwords do not match.")
+      return
+    }
+    // Interface preview only: no network request, storage, logging or account.
+    form.reset()
+    setNotice(registering
+      ? "Registration preview complete. No account was created."
+      : "Sign-in preview complete. Authentication is not connected yet.")
+  }
+
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        backgroundImage: "url('/images/gradient-background.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div
+        className="absolute inset-0 opacity-0"
+        style={{
+          background: "rgba(0, 0, 0, 0.15)",
+        }}
+      ></div>
+
+      {/* Floating glass orbs for visual interest */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full opacity-50 animate-pulse"
+          style={{
+            background: "rgba(255, 255, 255, 0.15)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            border: "2px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 8px 32px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4)",
+          }}
+        ></div>
+        <div
+          className="absolute top-3/4 right-1/4 w-24 h-24 rounded-full opacity-40 animate-pulse delay-1000"
+          style={{
+            background: "rgba(255, 255, 255, 0.15)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            border: "2px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 8px 32px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4)",
+          }}
+        ></div>
+        <div
+          className="absolute top-1/2 right-1/3 w-16 h-16 rounded-full opacity-45 animate-pulse delay-500"
+          style={{
+            background: "rgba(255, 255, 255, 0.15)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            border: "2px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "0 8px 32px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4)",
+          }}
+        ></div>
+      </div>
+
+      <Card
+        className="max-w-md hover-lift shadow-2xl relative z-10 opacity-100 w-[126%] mx-[0] border-transparent"
+        style={{
+          background: "rgba(255, 255, 255, 0.25)",
+          backdropFilter: "blur(40px) saturate(250%)",
+          border: "1px solid rgba(255, 255, 255, 0.4)",
+          boxShadow:
+            "0 32px 80px rgba(0, 0, 0, 0.3), 0 16px 64px rgba(255, 255, 255, 0.2), inset 0 3px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(255, 255, 255, 0.3)",
+        }}
+      >
+  <CardHeader className="text-center space-y-5 pt-2">
+  <h1 className="sr-only">{registering ? "Create your resavilo account" : "Sign in to resavilo"}</h1>
+  <img
+  src="/images/resavilo-logo.png"
+  alt="resavilo."
+  width={1458}
+  height={447}
+  className="mx-auto h-auto w-full max-w-[280px] drop-shadow-[0_2px_4px_rgba(255,255,255,0.5)]"
+  />
+  <CardDescription className="text-card-foreground/70 font-sans">
+            {registering ? "Create your account" : "Sign in to your account"}
+            <span className="block mt-2 text-xs">Preview only. Do not use a real password. No accounts are created.</span>
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-6">
+          <form onSubmit={handleSubmit} method="post" action="/" className="space-y-4">
+            {error && <p role="alert" className="text-sm text-red-900 bg-white/70 rounded-md p-3">{error}</p>}
+            {notice && <p role="status" className="text-sm bg-white/70 rounded-md p-3">{notice}</p>}
+            {registering && <div className="space-y-2">
+              <Label htmlFor="name">Full name</Label>
+              <Input id="name" name="name" autoComplete="name" minLength={1} maxLength={100} required />
+            </div>}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-card-foreground font-sans">
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                maxLength={254}
+                type="email"
+                placeholder="Enter your email"
+                autoComplete="off"
+                className="border-white/40 bg-white/10 placeholder:text-card-foreground/50 text-card-foreground py-3 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:bg-white/15 transition-all duration-200"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-card-foreground font-sans">
+                Password
+              </Label>
+              <Input
+                id="password"
+                name="password"
+                minLength={registering ? 12 : 1}
+                maxLength={128}
+                type="password"
+                placeholder="Enter your password"
+                autoComplete="new-password"
+                className="border-white/40 bg-white/10 placeholder:text-card-foreground/50 text-card-foreground py-3 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:bg-white/15 transition-all duration-200"
+                required
+              />
+            </div>
+
+            {registering && <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" minLength={12} maxLength={128} required />
+              <p className="text-xs text-card-foreground/70">Use 12–128 characters for this preview.</p>
+            </div>}
+
+            <Button
+              type="submit"
+              className="w-full ripple-effect hover-lift font-sans font-bold py-5 transition-all duration-300"
+              style={{ backgroundColor: "#0C115B", color: "white" }}
+            >
+              {registering ? "Preview registration" : "Preview sign-in"}
+            </Button>
+          </form>
+          <p className="text-center text-sm">
+            {registering ? "Already have an account? " : "New to resavilo? "}
+            <Link href={registering ? "/" : "/register"} className="font-semibold underline underline-offset-4">
+              {registering ? "Sign in" : "Create an account"}
+            </Link>
+          </p>
+
+          <div className="relative">
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="px-2 text-card-foreground/60 font-sans">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              disabled
+              className="w-full glass-effect border-white/30 hover-lift ripple-effect text-card-foreground hover:bg-white/20 font-sans transition-all duration-300"
+            >
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 2.43-4.53 6.16-4.53z"
+                />
+              </svg>
+              Continue with Google
+            </Button>
+
+            <Button
+              variant="outline"
+              disabled
+              className="w-full glass-effect border-white/30 hover-lift ripple-effect text-card-foreground hover:bg-white/20 font-sans transition-all duration-300"
+            >
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 384 512" fill="currentColor">
+                <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+              </svg>
+              Continue with Apple
+            </Button>
+
+            <Button
+              variant="outline"
+              disabled
+              className="w-full glass-effect border-white/30 hover-lift ripple-effect text-card-foreground hover:bg-white/20 font-sans transition-all duration-300"
+            >
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="#1877F2">
+                <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z" />
+              </svg>
+              Continue with Meta
+            </Button>
+          </div>
+
+          <div className="text-center">
+            <button
+              type="button"
+              disabled
+              className="text-sm text-card-foreground/70 hover:text-card-foreground font-sans transition-colors"
+            >
+              Forgot your password?
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
